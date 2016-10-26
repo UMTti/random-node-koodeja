@@ -1,55 +1,20 @@
-var http = require('http');
-var bl = require('bl');
+var net = require('net');
 
-var url1 = process.argv[2];
-var url2 = process.argv[3];
-var url3 = process.argv[4];
-var arr = [];
+ //"YYYY-MM-DD hh:mm"  
 
-http.get(url1, function(response) {
-  response.setEncoding("utf8");
-  response.pipe(bl(function (err, data) { 
-  	var str = data.toString();
-  	arr[0] = str;
-  	if(arr[0] != null && arr[1] != null && arr[2] != null){
-  		console.log(arr[0]);
-  		console.log(arr[1]);
-  		console.log(arr[2]);
-  	}
-  }));
-}).on('error', function(e) {
-  console.log("Got error: " + e.message);
-});
+var net = require('net')  
+var server = net.createServer(function (socket) {  
+    Number.prototype.padLeft = function(base,chr){
+    	var len = (String(base || 10).length - String(this).length)+1;
+    	return len > 0? new Array(len).join(chr || '0')+this : this;
+	}
 
-http.get(url2, function(response) {
-  response.setEncoding("utf8");
-  response.pipe(bl(function (err, data) { 
-  	var str = data.toString();
-  	arr[1] = str;
-  	if(arr[0] != null && arr[1] != null && arr[2] != null){
-  		console.log(arr[0]);
-  		console.log(arr[1]);
-  		console.log(arr[2]);
-  	}
-  }));
-}).on('error', function(e) {
-  console.log("Got error: " + e.message);
-});
+	var d = new Date,
+    dformat = [d.getFullYear(), (d.getMonth()+1).padLeft(),
+               d.getDate().padLeft()].join('-') +' ' +
+              [d.getHours().padLeft(),
+               d.getMinutes().padLeft()].join(':');
+    socket.end(dformat + "\n");
 
-http.get(url3, function(response) {
-  response.setEncoding("utf8");
-  response.pipe(bl(function (err, data) { 
-  	var str = data.toString();
-  	arr[2] = str;
-  	if(arr[0] != null && arr[1] != null && arr[2] != null){
-  		console.log(arr[0]);
-  		console.log(arr[1]);
-  		console.log(arr[2]);
-  	}
-  }));
-}).on('error', function(e) {
-  console.log("Got error: " + e.message);
-});
-
-
-
+})  
+server.listen(process.argv[2])  
