@@ -1,11 +1,15 @@
-var mymodule = require('./mymodule.js')  
+var http = require('http');
+ var bl = require('bl');
 
-mymodule(process.argv[2], process.argv[3], function(err, list) {
-  if (err) {
-    return console.error('There was an error:', err)
-  }
-
-  list.forEach(function (file) {
-    console.log(file)
-  })
+http.get(process.argv[2], function(response) {
+  response.setEncoding("utf8");
+  response.pipe(bl(function (err, data) { 
+  	var str = data.toString();
+  	console.log(str.length);
+  	console.log(str);
+  }));
+}).on('error', function(e) {
+  console.log("Got error: " + e.message);
 });
+
+
