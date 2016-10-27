@@ -1,20 +1,27 @@
-var net = require('net');
+var http = require('http'); 
+var fs = require('fs');
 
- //"YYYY-MM-DD hh:mm"  
+var server = http.createServer(function (request, response) {  
+	//var fstream = fs.createReadStream(process.argv[2]);
+	//fstream.pipe(response);
+	//response.end();
 
-var net = require('net')  
-var server = net.createServer(function (socket) {  
-    Number.prototype.padLeft = function(base,chr){
-    	var len = (String(base || 10).length - String(this).length)+1;
-    	return len > 0? new Array(len).join(chr || '0')+this : this;
-	}
+	//response.setEncoding("utf8");
+    var filename = process.argv[3];
 
-	var d = new Date,
-    dformat = [d.getFullYear(), (d.getMonth()+1).padLeft(),
-               d.getDate().padLeft()].join('-') +' ' +
-              [d.getHours().padLeft(),
-               d.getMinutes().padLeft()].join(':');
-    socket.end(dformat + "\n");
+  	// This line opens the file as a readable stream
+  	var readStream = fs.createReadStream(filename);
+
+  	// This will wait until we know the readable stream is actually valid before piping
+  	readStream.on('open', function () {
+    // This just pipes the read stream to the response object (which goes to the client)
+    	readStream.pipe(response);
+    	//response.end();
+  	});
+  	
+  	readStream.on('error', function(err) {
+    	response.end(err);
+  	});
 
 })  
 server.listen(process.argv[2])  
